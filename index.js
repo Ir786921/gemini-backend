@@ -1,5 +1,15 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 require('dotenv').config();
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const app = express();
+app.use(bodyParser.json());
+app.use(cors({
+    origin: "http://localhost:3000", 
+    methods: ["GET", "POST"],
+    credentials: true,
+  }))
 
 
 if (!process.env.SECRET_KEY) {
@@ -9,13 +19,8 @@ if (!process.env.SECRET_KEY) {
 const genAI = new GoogleGenerativeAI(process.env.SECRET_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-module.exports = async (req, res) => {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
-    }
-
+app.post("/api/chat" , async (req,res)=>{
     const { prompt } = req.body;
-
     if (!prompt) {
         return res.status(400).json({ error: "Prompt is required" });
     }
@@ -32,5 +37,12 @@ module.exports = async (req, res) => {
         console.error("Error generating content:", error);
         return res.status(500).json({ error: "An error occurred while generating content" });
     }
-};
+})
+
+const port = 6000 || process.env.PORT
+
+app.listen(port,()=>{
+    console.log("server is running");
+    
+})
 
