@@ -7,7 +7,7 @@ const app = express();
 const rateLimit = require('express-rate-limit');
 app.use(bodyParser.json());
 app.use(cors({
-    origin: "https://imran-gemini.vercel.app/", 
+    origin: "*", 
     methods: ["GET", "POST"],
     credentials: true,
     
