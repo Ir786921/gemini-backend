@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 app.use(cors({
     origin: "https://imran-gemini.vercel.app/", 
     methods: ["GET", "POST"],
-    credentials: true,
+    
   }))
 
 const limiter = rateLimit({
