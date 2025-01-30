@@ -9,6 +9,7 @@ app.use(bodyParser.json());
 app.use(cors({
     origin: "https://imran-gemini.vercel.app/", 
     methods: ["GET", "POST"],
+    credentials: true,
     
   }))
 
@@ -31,6 +32,8 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 app.post("/api/chat" , limiter, async (req,res)=>{
     const { prompt } = req.body;
+    console.log(prompt);
+    
     if (!prompt) {
         return res.status(400).json({ error: "Prompt is required" });
     }
