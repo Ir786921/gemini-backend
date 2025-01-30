@@ -11,6 +11,15 @@ app.use(cors({
     credentials: true,
   }))
 
+const limiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 25, // Max 25 requests per IP
+    message: { error: "Request limit reached. Try again later." },
+    keyGenerator: (req) => req.ip, // Track users by IP
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
 
 if (!process.env.SECRET_KEY) {
     throw new Error("SECRET_KEY is not defined in .env file");
@@ -19,7 +28,7 @@ if (!process.env.SECRET_KEY) {
 const genAI = new GoogleGenerativeAI(process.env.SECRET_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-app.post("/api/chat" , async (req,res)=>{
+app.post("/api/chat" , limiter, async (req,res)=>{
     const { prompt } = req.body;
     if (!prompt) {
         return res.status(400).json({ error: "Prompt is required" });
